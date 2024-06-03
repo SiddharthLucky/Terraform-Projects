@@ -38,12 +38,3 @@ terraform.tfvars.json
 *.cer
 *.der
 
-# IntelliJ IDEA
-.idea/
-*.iws
-*.iml
-*.ipr
-
-# Ignore IntelliJ IDEA project-specific files
-out/
-
