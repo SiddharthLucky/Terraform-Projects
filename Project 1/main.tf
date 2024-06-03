@@ -176,24 +176,42 @@ resource "aws_instance" "Project1-Ec2-Instance" {
   security_groups = [aws_security_group.Project1-SecurityGroup.id]
   iam_instance_profile = aws_iam_instance_profile.Project1-EC2-S3-InstanceProfile.name
   associate_public_ip_address = true
+
+  provisioner "remote-exec" {
+    inline = [
+      "echo 'Hello, World' > hello.txt",
+      "aws s3 cp hello.txt s3://terraform1-project1-tf-s3bucket",
+      "aws s3 cp s3://terraform1-project1-tf-s3bucket/hello.txt download_hello.txt",
+      "cat download_hello.txt"
+    ]
+  }
+
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = file("${path.module}/TF-new-Keypair.pem")
+    host        = self.public_ip
+  }
+
   tags = {
     Name = "${var.user}-Project1-EC2"
   }
 }
 
-resource "aws_instance" "Project1-Ec2-Instance2" {
-  ami = "ami-00beae93a2d981137"
-  availability_zone = "us-east-1a"
-  instance_type = "t2.micro"
-  key_name = "TF-new-Keypair"
-  subnet_id = aws_subnet.Project1-Subnet.id
-  security_groups = [aws_security_group.Project1-SecurityGroup.id]
-  iam_instance_profile = aws_iam_instance_profile.Project1-EC2-S3-InstanceProfile.name
-  associate_public_ip_address = true
-  tags = {
-    Name = "Terraform2-Project1-EC2"
-  }
-}
+# resource "aws_instance" "Project1-Ec2-Instance2" {
+#   ami = "ami-00beae93a2d981137"
+#   availability_zone = "us-east-1a"
+#   instance_type = "t2.micro"
+#   key_name = "TF-new-Keypair"
+#   subnet_id = aws_subnet.Project1-Subnet.id
+#   security_groups = [aws_security_group.Project1-SecurityGroup.id]
+#   //iam_instance_profile = aws_iam_instance_profile.Project1-EC2-S3-InstanceProfile.name
+#
+#   associate_public_ip_address = true
+#   tags = {
+#     Name = "Terraform2-Project1-EC2"
+#   }
+# }
 
 //Create IAM role
 resource "aws_iam_role" "Project1-EC2-Role-S3" {
@@ -214,14 +232,14 @@ resource "aws_iam_role" "Project1-EC2-Role-S3" {
 
 //Assign role policy to IAM
 resource "aws_iam_role_policy_attachment" "Project1-EC2-S3-RolePolicy" {
-  role       = aws_iam_role.Project1-EC2-Role-S3.name
+  role       = aws_iam_role.Project1-EC2-Role-S3.id
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
 //Adding Additional role policies to created IAM
 resource "aws_iam_role_policy" "ec2_additional_permissions" {
   name   = "ec2_additional_permissions"
-  role   = aws_iam_role.Project1-EC2-Role-S3.name
+  role   = aws_iam_role.Project1-EC2-Role-S3.id
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -239,6 +257,7 @@ resource "aws_iam_role_policy" "ec2_additional_permissions" {
 
 //Create IAM role Instance profile
 resource "aws_iam_instance_profile" "Project1-EC2-S3-InstanceProfile" {
-  name = "ec2_instance_profile"
-  role = aws_iam_role.Project1-EC2-Role-S3.name
+  name = "${var.user}-ec2_instance_profile"
+  role = aws_iam_role.Project1-EC2-Role-S3.id
 }
+
