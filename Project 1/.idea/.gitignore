@@ -1,0 +1,40 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform/
+terraform.tfvars
+terraform.tfvars.json
+
+# Ignore any .tfvars files that are generated
+*.auto.tfvars
+
+# Ignore CLI configuration files
+.terraformrc
+.terraformrc.json
+
+# Ignore PEM files (private keys)
+*.pem
+
+# Ignore SSH key files
+*.key
+*.pub
+
+# Ignore other sensitive files
+*.crt
+*.cer
+*.der
+
