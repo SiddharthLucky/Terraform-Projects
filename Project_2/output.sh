@@ -21,3 +21,7 @@ siddharthlucky@Siddharths-MacBook-Pro Project 2 % aws s3 cp hello.txt s3://$(ter
 upload: ./hello.txt to s3://project2-s3-bucket-712b31e97e84ac97/hello.txt
 siddharthlucky@Siddharths-MacBook-Pro Project 2 %
 
+- Can we only have 1 variable file instead of variable files at multiple level
+inferences are making it hard to associate
+
+- Ask about the problem on s3 bucket variables on how 1 is duplicating while the other variables are not
